@@ -1,0 +1,317 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Pendaftaran Siswa Baru - SMK Cahaya Islam Pulosari</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <style>
+        body { background-color: #f0f4f1; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; }
+        .form-container { background: #ffffff; border-radius: 15px; box-shadow: 0px 10px 30px rgba(0,0,0,0.08); overflow: hidden; }
+        .header-banner { background: linear-gradient(135deg, #1b4d3e 0%, #2e7d32 100%); color: white; padding: 35px 20px; }
+        .section-title { background-color: #e8f5e9; color: #1b4d3e; padding: 8px 15px; border-left: 5px solid #2e7d32; font-weight: bold; margin-bottom: 20px; margin-top: 30px; }
+        .btn-success { background-color: #1b4d3e; border: none; }
+        .btn-success:hover { background-color: #123329; }
+    </style>
+</head>
+<body>
+
+<div class="container my-5">
+    <div class="row justify-content-center">
+        <div class="col-lg-10 form-container p-0">
+            
+            <!-- Header -->
+            <div class="header-banner text-center">
+                <h2>SMK CAHAYA ISLAM PULOSARI</h2>
+                <p class="mb-0">Formulir Pendaftaran Peserta Didik Baru (PPDB) Lengkap</p>
+            </div>
+
+            <!-- Form -->
+            <form id="ppdbForm" class="p-4 p-md-5">
+                
+                <!-- 1. JURUSAN -->
+                <div class="section-title">1. Pilihan Jurusan</div>
+                <div class="row">
+                    <div class="col-md-6 mb-3">
+                        <label class="form-label">Jurusan Utama *</label>
+                        <select class="form-select" name="jurusan_utama" required>
+                            <option value="" selected disabled>-- Pilih Jurusan Utama --</option>
+                            <option value="Teknik Komputer & Jaringan (TKJ)">Teknik Komputer & Jaringan (TKJ)</option>
+                            <option value="Akuntansi">Akuntansi</option>
+                            <option value="Farmasi">Farmasi</option>
+                        </select>
+                    </div>
+                    <div class="col-md-6 mb-3">
+                        <label class="form-label">Jurusan Alternatif *</label>
+                        <select class="form-select" name="jurusan_alternatif" required>
+                            <option value="" selected disabled>-- Pilih Jurusan Alternatif --</option>
+                            <option value="Teknik Komputer & Jaringan (TKJ)">Teknik Komputer & Jaringan (TKJ)</option>
+                            <option value="Akuntansi">Akuntansi</option>
+                            <option value="Farmasi">Farmasi</option>
+                        </select>
+                    </div>
+                </div>
+
+                <!-- 2. DATA NAMA -->
+                <div class="section-title">2. Identitas Nama</div>
+                <div class="row">
+                    <div class="col-md-8 mb-3">
+                        <label class="form-label">Nama Lengkap (Sesuai Ijazah) *</label>
+                        <input type="text" class="form-control" name="nama_lengkap" placeholder="Masukkan nama lengkap" required>
+                    </div>
+                    <div class="col-md-4 mb-3">
+                        <label class="form-label">Nama Panggilan *</label>
+                        <input type="text" class="form-control" name="nama_panggilan" placeholder="Nama panggilan" required>
+                    </div>
+                </div>
+
+                <!-- 3 & 4. NISN & JENIS KELAMIN -->
+                <div class="section-title">3 & 4. Legalitas & Gender</div>
+                <div class="row">
+                    <div class="col-md-6 mb-3">
+                        <label class="form-label">NISN (Nomor Induk Siswa Nasional) *</label>
+                        <input type="number" class="form-control" name="nisn" placeholder="10 Digit nomor NISN" required>
+                    </div>
+                    <div class="col-md-6 mb-3">
+                        <label class="form-label">Jenis Kelamin *</label>
+                        <div>
+                            <div class="form-check form-check-inline mt-2">
+                                <input class="form-check-input" type="radio" name="jenis_kelamin" id="laki" value="Laki-laki" required>
+                                <label class="form-check-label" for="laki">Laki-laki</label>
+                            </div>
+                            <div class="form-check form-check-inline mt-2">
+                                <input class="form-check-input" type="radio" name="jenis_kelamin" id="perempuan" value="Perempuan">
+                                <label class="form-check-label" for="perempuan">Perempuan</label>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 5. TEMPAT TANGGAL LAHIR & SAUDARA -->
+                <div class="section-title">5. Kelahiran & Bersaudara</div>
+                <div class="row">
+                    <div class="col-md-4 mb-3">
+                        <label class="form-label">Tempat Lahir *</label>
+                        <input type="text" class="form-control" name="tempat_lahir" placeholder="Kota/Kabupaten" required>
+                    </div>
+                    <div class="col-md-4 mb-3">
+                        <label class="form-label">Tanggal Lahir *</label>
+                        <input type="date" class="form-control" name="tanggal_lahir" required>
+                    </div>
+                    <div class="col-md-2 mb-3">
+                        <label class="form-label">Anak Ke- *</label>
+                        <input type="number" class="form-control" name="anak_ke" min="1" placeholder="0" required>
+                    </div>
+                    <div class="col-md-2 mb-3">
+                        <label class="form-label">Jumlah Saudara *</label>
+                        <input type="number" class="form-control" name="jumlah_saudara" min="0" placeholder="0" required>
+                    </div>
+                </div>
+
+                <!-- 6. ALAMAT -->
+                <div class="section-title">6. Alamat Tempat Tinggal</div>
+                <div class="row">
+                    <div class="col-md-12 mb-3">
+                        <label class="form-label">Alamat Rumah (Nama Jalan / Kampung / No. Rumah) *</label>
+                        <input type="text" class="form-control" name="alamat" placeholder="Contoh: Jl. Raya Pulosari No. 12" required>
+                    </div>
+                    <div class="col-md-3 mb-3">
+                        <label class="form-label">RT / RW *</label>
+                        <input type="text" class="form-control" name="rt_rw" placeholder="001/002" required>
+                    </div>
+                    <div class="col-md-5 mb-3">
+                        <label class="form-label">Kelurahan / Desa *</label>
+                        <input type="text" class="form-control" name="kelurahan" placeholder="Masukkan desa" required>
+                    </div>
+                    <div class="col-md-4 mb-3">
+                        <label class="form-label">Kode Pos *</label>
+                        <input type="number" class="form-control" name="kode_pos" placeholder="Contoh: 52355" required>
+                    </div>
+                    <div class="col-md-6 mb-3">
+                        <label class="form-label">Kecamatan *</label>
+                        <input type="text" class="form-control" name="kecamatan" placeholder="Kecamatan" required>
+                    </div>
+                    <div class="col-md-6 mb-3">
+                        <label class="form-label">Kabupaten *</label>
+                        <input type="text" class="form-control" name="kabupaten" placeholder="Kabupaten" required>
+                    </div>
+                </div>
+
+                <!-- 7. KONTAK -->
+                <div class="section-title">7. Nomor Telepon / HP</div>
+                <div class="row">
+                    <div class="col-md-6 mb-3">
+                        <label class="form-label">No. Telepon Rumah (Opsional)</label>
+                        <input type="tel" class="form-control" name="no_telepon" placeholder="Nomor telepon rumah">
+                    </div>
+                    <div class="col-md-6 mb-3">
+                        <label class="form-label">No. HP / WhatsApp (Aktif) *</label>
+                        <input type="tel" class="form-control" name="no_hp" placeholder="Contoh: 081234567xxx" required>
+                    </div>
+                </div>
+
+                <!-- 8. ORANG TUA / WALI -->
+                <div class="section-title">8. Data Orang Tua / Wali & Status Anak</div>
+                <div class="row">
+                    <div class="col-md-6 mb-3">
+                        <label class="form-label">Nama Ibu Kandung *</label>
+                        <input type="text" class="form-control" name="nama_ibu" placeholder="Nama ibu kandung" required>
+                    </div>
+                    <div class="col-md-6 mb-3">
+                        <label class="form-label">Nama Ayah Kandung / Wali *</label>
+                        <input type="text" class="form-control" name="nama_ayah_wali" placeholder="Nama ayah atau wali" required>
+                    </div>
+                    <div class="col-md-4 mb-3">
+                        <label class="form-label">Pekerjaan Orang Tua / Wali *</label>
+                        <input type="text" class="form-control" name="pekerjaan_wali" placeholder="Contoh: Buruh, PNS, Wiraswasta" required>
+                    </div>
+                    <div class="col-md-4 mb-3">
+                        <label class="form-label">Pendidikan Terakhir Wali *</label>
+                        <select class="form-select" name="pendidikan_wali" required>
+                            <option value="" selected disabled>-- Pilih Pendidikan --</option>
+                            <option value="SD / Sederajat">SD / Sederajat</option>
+                            <option value="SMP / Sederajat">SMP / Sederajat</option>
+                            <option value="SMA / SMK / Sederajat">SMA / SMK / Sederajat</option>
+                            <option value="D3 / D4 / S1">D3 / D4 / S1</option>
+                            <option value="S2 / S3">S2 / S3</option>
+                            <option value="Tidak Sekolah">Tidak Sekolah</option>
+                        </select>
+                    </div>
+                    <div class="col-md-4 mb-3">
+                        <label class="form-label">Status Anak *</label>
+                        <select class="form-select" name="status_anak" required>
+                            <option value="" selected disabled>-- Pilih Status Anak --</option>
+                            <option value="Anak Kandung">Anak Kandung</option>
+                            <option value="Anak Tiri">Anak Tiri</option>
+                            <option value="Anak Angkat">Anak Angkat</option>
+                        </select>
+                    </div>
+                    <div class="col-md-12 mb-3">
+                        <label class="form-label">Alamat Orang Tua / Wali *</label>
+                        <input type="text" class="form-control" name="alamat_wali" placeholder="Tulis 'Sama dengan siswa' jika alamat sama" required>
+                    </div>
+                </div>
+
+                <!-- 9 & 10. HOBI & CITA-CITA -->
+                <div class="section-title">9 & 10. Potensi Diri</div>
+                <div class="row">
+                    <div class="col-md-6 mb-3">
+                        <label class="form-label">Hobi *</label>
+                        <input type="text" class="form-control" name="hobi" placeholder="Contoh: Membaca, Olahraga, Coding" required>
+                    </div>
+                    <div class="col-md-6 mb-3">
+                        <label class="form-label">Cita-Cita *</label>
+                        <input type="text" class="form-control" name="cita_cita" placeholder="Contoh: Programmer, Akuntan, Apoteker" required>
+                    </div>
+                </div>
+
+                <!-- 11. ASAL SEKOLAH -->
+                <div class="section-title">11. Asal Sekolah</div>
+                <div class="row">
+                    <div class="col-md-4 mb-3">
+                        <label class="form-label">Jenis Sekolah Asal *</label>
+                        <select class="form-select" name="jenis_asal_sekolah" required>
+                            <option value="" selected disabled>-- Pilih Kategori --</option>
+                            <option value="SMP">SMP</option>
+                            <option value="MTs">MTs</option>
+                            <option value="Paket B">Paket B</option>
+                        </select>
+                    </div>
+                    <div class="col-md-8 mb-3">
+                        <label class="form-label">Nama Sekolah Asal *</label>
+                        <input type="text" class="form-control" name="nama_sekolah" placeholder="Contoh: SMPN 1 Pulosari" required>
+                    </div>
+                    <div class="col-md-6 mb-3">
+                        <label class="form-label">Nomor Seri Ijazah (Isi '-' jika belum terbit)</label>
+                        <input type="text" class="form-control" name="no_ijazah" placeholder="Contoh: DN-01/M-SMP/13/xxxxxxx">
+                    </div>
+                    <div class="col-md-6 mb-3">
+                        <label class="form-label">Nomor Seri SKHUN (Isi '-' jika tidak ada)</label>
+                        <input type="text" class="form-control" name="no_skhun" placeholder="Masukkan nomor seri SKHUN">
+                    </div>
+                </div>
+
+                <!-- 12. PENDIDIKAN NON FORMAL -->
+                <div class="section-title">12. Pendidikan Non Formal (Pernah/Sedang Diikuti)</div>
+                <div class="row">
+                    <div class="col-md-12 mb-3">
+                        <label class="form-label d-block">Pilih yang sesuai (Bisa pilih lebih dari satu):</label>
+                        <div class="form-check form-check-inline">
+                            <input class="form-check-input" type="checkbox" name="non_formal" id="inggris" value="Kursus Bahasa Inggris">
+                            <label class="form-check-label" for="inggris">Kursus Bahasa Inggris</label>
+                        </div>
+                        <div class="form-check form-check-inline">
+                            <input class="form-check-input" type="checkbox" name="non_formal" id="arab" value="Kursus Bahasa Arab">
+                            <label class="form-check-label" for="arab">Kursus Bahasa Arab</label>
+                        </div>
+                        <div class="form-check form-check-inline">
+                            <input class="form-check-input" type="checkbox" name="non_formal" id="diniyah" value="Madrasah Diniyah">
+                            <label class="form-check-label" for="diniyah">Madrasah Diniyah</label>
+                        </div>
+                    </div>
+                    <div class="col-md-12 mb-3">
+                        <label class="form-label">Pendidikan Non-Formal Lainnya (Sebutkan jika ada)</label>
+                        <input type="text" class="form-control" name="non_formal_lainnya" placeholder="Contoh: Kursus Komputer, Pesantren Kilat">
+                    </div>
+                </div>
+
+                <hr class="my-5">
+
+                <!-- SUBMIT BUTTON -->
+                <div class="d-grid">
+                    <button type="submit" id="submitBtn" class="btn btn-success btn-lg">Kirim Pendaftaran Siswa</button>
+                </div>
+
+                <div id="alertMessage" class="alert mt-4 d-none" role="alert"></div>
+
+            </form>
+        </div>
+    </div>
+</div>
+
+<script>
+    // MASUKKAN URL WEB APP YANG BARU DI SINI
+    const scriptURL = 'GANTI_DENGAN_URL_WEB_APP_BARU_ANDA';
+    
+    const form = document.getElementById('ppdbForm');
+    const submitBtn = document.getElementById('submitBtn');
+    const alertMessage = document.getElementById('alertMessage');
+
+    form.addEventListener('submit', e => {
+        e.preventDefault();
+        
+        submitBtn.disabled = true;
+        submitBtn.innerHTML = 'Sedang mengirim semua data formulir...';
+        alertMessage.classList.add('d-none');
+
+        // Menggabungkan pilihan checkbox Pendidikan Non Formal menjadi string dipisah koma
+        let checkedNonFormal = [];
+        document.querySelectorAll('input[name="non_formal"]:checked').forEach((checkbox) => {
+            checkedNonFormal.push(checkbox.value);
+        });
+
+        // Buat objek form baru untuk dimodifikasi sebelum dikirim
+        let formData = new FormData(form);
+        formData.delete('non_formal'); // hapus data checkbox bawaan asli
+        formData.append('non_formal', checkedNonFormal.join(', ')); // ganti dengan teks gabungan koma
+
+        fetch(scriptURL, { method: 'POST', body: formData })
+            .then(response => {
+                submitBtn.disabled = false;
+                submitBtn.innerHTML = 'Kirim Pendaftaran Siswa';
+                alertMessage.className = "alert alert-success mt-4";
+                alertMessage.innerHTML = "<strong>Berhasil!</strong> Data pendaftaran siswa SMK Cahaya Islam Pulosari telah tersimpan di spreadsheet.";
+                form.reset();
+                window.scrollTo({top: 0, behavior: 'smooth'}); // Otomatis scroll ke atas setelah berhasil
+            })
+            .catch(error => {
+                submitBtn.disabled = false;
+                submitBtn.innerHTML = 'Kirim Pendaftaran Siswa';
+                alertMessage.className = "alert alert-danger mt-4";
+                alertMessage.innerHTML = "<strong>Gagal!</strong> Terjadi kendala teknis saat mengirim data.";
+                console.error('Error!', error.message);
+            });
+    });
+</script>
+</body>
+</html>
