@@ -189,7 +189,7 @@
                     </div>
                     <div class="col-md-4 mb-3">
                         <label class="form-label">Tanggal Lahir *</label>
-                        <input type="date" class="form-control" name="tanggal_lahir" required>
+                        <input type="date" class="form-control" id="tanggal_lahir" name="tanggal_lahir" required>
                     </div>
                     <div class="col-md-2 mb-3">
                         <label class="form-label">Anak Ke- *</label>
@@ -374,20 +374,45 @@
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
 
 <script>
-    // GANTI URL ini dengan URL Web App Google Apps Script Anda yang baru dideploy
     const scriptURL = 'https://script.google.com/macros/s/AKfycbwDTk19MrfkYJl66t483ld9E03fcT4DMYoMSVYlPoVesceM1t_kgh2tBPsvWTqBGGFAnw/exec';
     
     const form = document.getElementById('ppdbForm');
     const submitBtn = document.getElementById('submitBtn');
     const alertMessage = document.getElementById('alertMessage');
     
-    // Inisialisasi Bootstrap Modal
     const statusModal = new bootstrap.Modal(document.getElementById('statusModal'));
     const modalHeaderBg = document.getElementById('modalHeaderBg');
     const modalMessage = document.getElementById('modalMessage');
 
+    // --- PENGATURAN PEMBATASAN KALENDER TANGGAL LAHIR ---
+    const inputTanggalLahir = document.getElementById('tanggal_lahir');
+    const tahunSekarang = new Date().getFullYear();
+
+    // Set minimal tahun lahir (Maksimal umur 21 tahun dari sekarang)
+    const tahunMin = tahunSekarang - 21;
+    // Set maksimal tahun lahir (Minimal umur 13 tahun dari sekarang)
+    const tahunMax = tahunSekarang - 13;
+
+    // Kunci pilihan kalender input type="date" secara native
+    inputTanggalLahir.min = `${tahunMin}-01-01`;
+    inputTanggalLahir.max = `${tahunMax}-12-31`;
+
     form.addEventListener('submit', e => {
         e.preventDefault();
+
+        // --- VALIDASI LANJUTAN SAAT TOMBOL SUBMIT DIKLIK ---
+        const tanggalTerpilih = new Date(inputTanggalLahir.value);
+        const tahunTerpilih = tanggalTerpilih.getFullYear();
+
+        if (tahunTerpilih < tahunMin || tahunTerpilih > tahunMax) {
+            // Konfigurasi pop-up penolakan umur tidak wajar
+            modalHeaderBg.className = "modal-header text-white text-center d-block py-4 bg-danger";
+            modalHeaderBg.innerHTML = '<h5 class="modal-title fw-bold">⚠️ Tanggal Lahir Tidak Valid</h5>';
+            modalMessage.innerHTML = `<strong>Pendaftaran Ditolak!</strong><br>Tahun kelogisan umur untuk calon siswa baru SMK adalah antara tahun <strong>${tahunMin}</strong> sampai dengan <strong>${tahunMax}</strong> (Berusia 13-21 tahun).<br><br>Periksa kembali tanggal lahir yang Anda masukkan.`;
+            
+            statusModal.show();
+            return; // Gagalkan pengiriman data ke spreadsheet
+        }
         
         submitBtn.disabled = true;
         submitBtn.innerHTML = 'Sedang mengecek & mengirim data formulir...';
@@ -403,31 +428,28 @@
         formData.append('non_formal', checkedNonFormal.join(', ')); 
 
         fetch(scriptURL, { method: 'POST', body: formData })
-            .then(response => response.json()) // Ubah respon teks menjadi JSON object
+            .then(response => response.json())
             .then(data => {
                 submitBtn.disabled = false;
                 submitBtn.innerHTML = 'Kirim Pendaftaran Siswa';
                 
                 if (data.result === 'success') {
-                    // Konfigurasi pop-up sukses
                     modalHeaderBg.className = "modal-header text-white text-center d-block py-4 bg-success";
                     modalHeaderBg.innerHTML = '<h5 class="modal-title fw-bold">✓ Pendaftaran Berhasil</h5>';
                     modalMessage.innerHTML = "<strong>Selamat!</strong> Data pendaftaran siswa SMK Cahaya Islam Pulosari telah berhasil dikirim.<br><br>Mohon tunggu informasi selanjutnya dari pihak panitia sekolah.";
                     
-                    form.reset(); // Reset form hanya jika sukses mendaftar
+                    form.reset();
                     window.scrollTo({top: 0, behavior: 'smooth'});
-                    statusModal.show(); // Tampilkan pop-up
+                    statusModal.show();
                     
                 } else if (data.result === 'duplicate') {
-                    // Konfigurasi pop-up gagal / duplikat
                     modalHeaderBg.className = "modal-header text-white text-center d-block py-4 bg-warning text-dark";
                     modalHeaderBg.innerHTML = '<h5 class="modal-title fw-bold">⚠️ Pendaftaran Ditolak</h5>';
-                    modalMessage.innerHTML = "<strong>Maaf, Anda Sudah Terdaftar!</strong><br>Silahkan hubungi kami, CS : 0882 1518 8766 / datang langsung ke SMK Cahaya Islam Pulosari, jika anda merasa ini kesalahan atau belum pernah mendaftar.";
+                    modalMessage.innerHTML = "<strong>Maaf, Anda Sudah Terdaftar!</strong><br>Silahkan hubungi kami, CS : 0882 1518 8766 / bisa datang langsung ke SMK Cahaya Islam Pulosari, jika anda merasa ini kesalahan atau belum pernah mendaftar.";
                     
-                    statusModal.show(); // Tampilkan pop-up peringatan
+                    statusModal.show();
                     
                 } else {
-                    // Error handle lainnya dari backend
                     alertMessage.className = "alert alert-danger mt-4";
                     alertMessage.innerHTML = "<strong>Gagal!</strong> Terjadi kendala sistem: " + data.error;
                     alertMessage.classList.remove('d-none');
