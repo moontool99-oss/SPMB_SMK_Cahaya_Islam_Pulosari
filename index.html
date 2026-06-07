@@ -361,10 +361,10 @@
             <div id="modalHeaderBg" class="modal-header text-white text-center d-block py-4">
                 <h5 class="modal-title fw-bold" id="statusModalLabel">Status Pendaftaran</h5>
             </div>
-            <div class="modal-body text-center p-4">
-                <p id="modalMessage" class="fs-5 text-secondary"></p>
+            <div class="modal-body p-4">
+                <div id="modalMessage" class="fs-5 text-secondary"></div>
             </div>
-            <div class="modal-footer justify-content-center border-0 pb-4">
+            <div id="modalFooter" class="modal-footer justify-content-center border-0 pb-4">
                 <button type="button" class="btn btn-secondary px-4 py-2" data-bs-dismiss="modal" style="border-radius: 8px;">Tutup</button>
             </div>
         </div>
@@ -383,6 +383,7 @@
     const statusModal = new bootstrap.Modal(document.getElementById('statusModal'));
     const modalHeaderBg = document.getElementById('modalHeaderBg');
     const modalMessage = document.getElementById('modalMessage');
+    const modalFooter = document.getElementById('modalFooter');
 
     // --- LOGIKA SALING MENUTUP OPSI JURUSAN YANG SAMA ---
     const jurusanUtama = document.getElementById('jurusan_utama');
@@ -392,14 +393,12 @@
         const valUtama = jurusanUtama.value;
         const valAlternatif = jurusanAlternatif.value;
 
-        // Reset status disable di jurusan alternatif
         Array.from(jurusanAlternatif.options).forEach(option => {
             if (option.value !== "") {
                 option.disabled = (option.value === valUtama);
             }
         });
 
-        // Reset status disable di jurusan utama
         Array.from(jurusanUtama.options).forEach(option => {
             if (option.value !== "") {
                 option.disabled = (option.value === valAlternatif);
@@ -421,18 +420,21 @@
     inputTanggalLahir.min = `${tahunMin}-01-01`;
     inputTanggalLahir.max = `${tahunMax}-12-31`;
 
+    // --- LOGIKA SUBMIT DAN KONFIRMASI DATA ---
     form.addEventListener('submit', e => {
         e.preventDefault();
 
-        // --- VALIDASI LANJUTAN TANGGAL LAHIR ---
+        // 1. Validasi Umur Logis Kelahiran
         const tanggalTerpilih = new Date(inputTanggalLahir.value);
         const tahunTerpilih = tanggalTerpilih.getFullYear();
 
         if (tahunTerpilih < tahunMin || tahunTerpilih > tahunMax) {
             modalHeaderBg.className = "modal-header text-white text-center d-block py-4 bg-danger";
             modalHeaderBg.innerHTML = '<h5 class="modal-title fw-bold">⚠️ Tanggal Lahir Tidak Valid</h5>';
+            modalMessage.className = "text-center text-secondary";
             modalMessage.innerHTML = `<strong>Pendaftaran Ditolak!</strong><br>Tahun kelogisan umur untuk calon siswa baru SMK adalah antara tahun <strong>${tahunMin}</strong> sampai dengan <strong>${tahunMax}</strong> (Berusia 13-21 tahun).<br><br>Periksa kembali tanggal lahir yang Anda masukkan.`;
             
+            modalFooter.innerHTML = '<button type="button" class="btn btn-secondary px-4 py-2" data-bs-dismiss="modal" style="border-radius: 8px;">Tutup</button>';
             statusModal.show();
             inputTanggalLahir.value = ""; 
             
@@ -442,10 +444,54 @@
             
             return;
         }
+
+        // 2. TAMPILKAN POP-UP KONFIRMASI RINGKASAN DATA JURUSAN
+        const namaSiswa = form.elements['nama_lengkap'].value;
+        const nisnSiswa = form.elements['nisn'].value;
+        const jUtama = jurusanUtama.value;
+        const jAlternatif = jurusanAlternatif.value;
+
+        modalHeaderBg.className = "modal-header text-white text-center d-block py-4 bg-primary";
+        modalHeaderBg.innerHTML = '<h5 class="modal-title fw-bold">🔍 Konfirmasi Ulang Pilihan Anda</h5>';
         
+        // Desain tabel ringkasan data di dalam modal
+        modalMessage.className = "text-start text-secondary";
+        modalMessage.innerHTML = `
+            <p class="text-center mb-3 text-dark font-weight-bold">Mohon periksa kembali agar pilihan jurusan tidak tertukar!</p>
+            <table class="table table-bordered table-sm fs-6">
+                <tr><th class="bg-light" width="40%">Nama Lengkap</th><td>${namaSiswa}</td></tr>
+                <tr><th class="bg-light">NISN</th><td>${nisnSiswa}</td></tr>
+                <tr class="table-info"><th>Jurusan UTAMA</th><td class="fw-bold text-primary">${jUtama}</td></tr>
+                <tr class="table-warning"><th>Jurusan ALTERNATIF</th><td class="fw-bold text-warning-emphasis">${jAlternatif}</td></tr>
+            </table>
+            <p class="text-danger small mb-0 text-center"><i>Apakah data di atas sudah benar dan sesuai?</i></p>
+        `;
+
+        // Ubah tombol modal menjadi "Ubah Data" dan "Ya, Kirim Data"
+        modalFooter.innerHTML = `
+            <button type="button" class="btn btn-outline-secondary px-3" data-bs-dismiss="modal" style="border-radius: 8px;">Ubah Data</button>
+            <button type="button" id="confirmSubmitBtn" class="btn btn-primary px-4" style="border-radius: 8px;">Ya, Kirim Data</button>
+        `;
+        
+        statusModal.show();
+
+        // Eksekusi pengiriman sesungguhnya ketika tombol konfirmasi di dalam modal diklik
+        document.getElementById('confirmSubmitBtn').addEventListener('click', () => {
+            sendDataToSpreadsheet();
+        });
+    });
+
+    // FUNGSI PENGIRIMAN DATA UTAMA
+    function sendDataToSpreadsheet() {
+        // Ganti tampilan modal menjadi mode loading
+        modalHeaderBg.className = "modal-header text-white text-center d-block py-4 bg-info";
+        modalHeaderBg.innerHTML = '<h5 class="modal-title fw-bold">⏳ Memproses Data</h5>';
+        modalMessage.className = "text-center p-4 text-secondary";
+        modalMessage.innerHTML = '<div class="spinner-border text-info mb-3" role="status"></div><br><strong>Sedang menyimpan data ke database...</strong><br>Mohon jangan menutup jendela ini.';
+        modalFooter.innerHTML = ''; // Sembunyikan tombol saat loading
+
         submitBtn.disabled = true;
         submitBtn.innerHTML = 'Sedang mengecek & mengirim data formulir...';
-        alertMessage.classList.add('d-none');
 
         let checkedNonFormal = [];
         document.querySelectorAll('input[name="non_formal"]:checked').forEach((checkbox) => {
@@ -462,30 +508,32 @@
                 submitBtn.disabled = false;
                 submitBtn.innerHTML = 'Kirim Pendaftaran Siswa';
                 
+                // Kembalikan tombol default modal tutup
+                modalFooter.innerHTML = '<button type="button" class="btn btn-secondary px-4 py-2" data-bs-dismiss="modal" style="border-radius: 8px;">Tutup</button>';
+
                 if (data.result === 'success') {
                     modalHeaderBg.className = "modal-header text-white text-center d-block py-4 bg-success";
                     modalHeaderBg.innerHTML = '<h5 class="modal-title fw-bold">✓ Pendaftaran Berhasil</h5>';
                     modalMessage.innerHTML = "<strong>Selamat!</strong> Data pendaftaran siswa SMK Cahaya Islam Pulosari telah berhasil dikirim.<br><br>Mohon tunggu informasi selanjutnya dari pihak panitia sekolah.";
                     
                     form.reset();
-                    filterJurusan(); // Kembalikan status disable pilihan jurusan ke kondisi awal
+                    filterJurusan(); 
                     window.scrollTo({top: 0, behavior: 'smooth'});
-                    statusModal.show();
                     
                 } else if (data.result === 'duplicate') {
                     modalHeaderBg.className = "modal-header text-white text-center d-block py-4 bg-warning text-dark";
                     modalHeaderBg.innerHTML = '<h5 class="modal-title fw-bold">⚠️ Pendaftaran Ditolak</h5>';
                     modalMessage.innerHTML = "<strong>Maaf, Anda Sudah Terdaftar!</strong><br>Silahkan hubungi kami, CS : 0882 1518 8766 / bisa datang langsung ke SMK Cahaya Islam Pulosari, jika anda merasa ini kesalahan atau belum pernah mendaftar.";
                     
-                    statusModal.show();
-                    
                 } else {
+                    statusModal.hide(); // Sembunyikan modal jika error sistem backend
                     alertMessage.className = "alert alert-danger mt-4";
                     alertMessage.innerHTML = "<strong>Gagal!</strong> Terjadi kendala sistem: " + data.error;
                     alertMessage.classList.remove('d-none');
                 }
             })
             .catch(error => {
+                statusModal.hide();
                 submitBtn.disabled = false;
                 submitBtn.innerHTML = 'Kirim Pendaftaran Siswa';
                 alertMessage.className = "alert alert-danger mt-4";
@@ -493,7 +541,7 @@
                 alertMessage.classList.remove('d-none');
                 console.error('Error!', error.message);
             });
-    });
+    }
 </script>
 </body>
 </html>
