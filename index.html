@@ -132,7 +132,7 @@
                 <div class="row">
                     <div class="col-md-6 mb-3">
                         <label class="form-label">Jurusan Utama *</label>
-                        <select class="form-select" name="jurusan_utama" required>
+                        <select class="form-select" id="jurusan_utama" name="jurusan_utama" required>
                             <option value="" selected disabled>-- Pilih Jurusan Utama --</option>
                             <option value="Akuntansi Keuangan Lembaga (AKL)">Akuntansi Keuangan Lembaga (AKL)</option>
                             <option value="Agribisnis Tanaman Pangan dan Hortikultur (ATPH)">Agribisnis Tanaman Pangan dan Hortikultur (ATPH)</option>
@@ -140,7 +140,7 @@
                     </div>
                     <div class="col-md-6 mb-3">
                         <label class="form-label">Jurusan Alternatif *</label>
-                        <select class="form-select" name="jurusan_alternatif" required>
+                        <select class="form-select" id="jurusan_alternatif" name="jurusan_alternatif" required>
                             <option value="" selected disabled>-- Pilih Jurusan Alternatif --</option>
                             <option value="Akuntansi Keuangan Lembaga (AKL)">Akuntansi Keuangan Lembaga (AKL)</option>
                             <option value="Agribisnis Tanaman Pangan dan Hortikultur (ATPH)">Agribisnis Tanaman Pangan dan Hortikultur (ATPH)</option>
@@ -384,43 +384,63 @@
     const modalHeaderBg = document.getElementById('modalHeaderBg');
     const modalMessage = document.getElementById('modalMessage');
 
+    // --- LOGIKA SALING MENUTUP OPSI JURUSAN YANG SAMA ---
+    const jurusanUtama = document.getElementById('jurusan_utama');
+    const jurusanAlternatif = document.getElementById('jurusan_alternatif');
+
+    function filterJurusan() {
+        const valUtama = jurusanUtama.value;
+        const valAlternatif = jurusanAlternatif.value;
+
+        // Reset status disable di jurusan alternatif
+        Array.from(jurusanAlternatif.options).forEach(option => {
+            if (option.value !== "") {
+                option.disabled = (option.value === valUtama);
+            }
+        });
+
+        // Reset status disable di jurusan utama
+        Array.from(jurusanUtama.options).forEach(option => {
+            if (option.value !== "") {
+                option.disabled = (option.value === valAlternatif);
+            }
+        });
+    }
+
+    jurusanUtama.addEventListener('change', filterJurusan);
+    jurusanAlternatif.addEventListener('change', filterJurusan);
+
+
     // --- PENGATURAN PEMBATASAN KALENDER TANGGAL LAHIR ---
     const inputTanggalLahir = document.getElementById('tanggal_lahir');
     const tahunSekarang = new Date().getFullYear();
 
-    // Set minimal tahun lahir (Maksimal umur 21 tahun dari sekarang)
     const tahunMin = tahunSekarang - 21;
-    // Set maksimal tahun lahir (Minimal umur 13 tahun dari sekarang)
     const tahunMax = tahunSekarang - 13;
 
-    // Kunci pilihan kalender input type="date" secara native
     inputTanggalLahir.min = `${tahunMin}-01-01`;
     inputTanggalLahir.max = `${tahunMax}-12-31`;
 
     form.addEventListener('submit', e => {
         e.preventDefault();
 
-        // --- VALIDASI LANJUTAN SAAT TOMBOL SUBMIT DIKLIK ---
+        // --- VALIDASI LANJUTAN TANGGAL LAHIR ---
         const tanggalTerpilih = new Date(inputTanggalLahir.value);
         const tahunTerpilih = tanggalTerpilih.getFullYear();
 
         if (tahunTerpilih < tahunMin || tahunTerpilih > tahunMax) {
-            // Konfigurasi pop-up penolakan umur tidak wajar
             modalHeaderBg.className = "modal-header text-white text-center d-block py-4 bg-danger";
             modalHeaderBg.innerHTML = '<h5 class="modal-title fw-bold">⚠️ Tanggal Lahir Tidak Valid</h5>';
             modalMessage.innerHTML = `<strong>Pendaftaran Ditolak!</strong><br>Tahun kelogisan umur untuk calon siswa baru SMK adalah antara tahun <strong>${tahunMin}</strong> sampai dengan <strong>${tahunMax}</strong> (Berusia 13-21 tahun).<br><br>Periksa kembali tanggal lahir yang Anda masukkan.`;
             
             statusModal.show();
-
-            // --- KODE TAMBAHAN: Kosongkan nilai input yang salah ---
             inputTanggalLahir.value = ""; 
             
-            // --- KODE TAMBAHAN: Fokus otomatis ke kolom setelah menekan tombol tutup modal ---
             document.getElementById('statusModal').addEventListener('hidden.bs.modal', function () {
                 inputTanggalLahir.focus();
-            }, { once: true }); // { once: true } memastikan event listener langsung dihapus setelah dieksekusi sekali
+            }, { once: true });
             
-            return; // Gagalkan pengiriman data ke spreadsheet
+            return;
         }
         
         submitBtn.disabled = true;
@@ -448,6 +468,7 @@
                     modalMessage.innerHTML = "<strong>Selamat!</strong> Data pendaftaran siswa SMK Cahaya Islam Pulosari telah berhasil dikirim.<br><br>Mohon tunggu informasi selanjutnya dari pihak panitia sekolah.";
                     
                     form.reset();
+                    filterJurusan(); // Kembalikan status disable pilihan jurusan ke kondisi awal
                     window.scrollTo({top: 0, behavior: 'smooth'});
                     statusModal.show();
                     
