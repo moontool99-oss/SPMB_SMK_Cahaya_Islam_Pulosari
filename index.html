@@ -411,6 +411,15 @@
             modalMessage.innerHTML = `<strong>Pendaftaran Ditolak!</strong><br>Tahun kelogisan umur untuk calon siswa baru SMK adalah antara tahun <strong>${tahunMin}</strong> sampai dengan <strong>${tahunMax}</strong> (Berusia 13-21 tahun).<br><br>Periksa kembali tanggal lahir yang Anda masukkan.`;
             
             statusModal.show();
+
+            // --- KODE TAMBAHAN: Kosongkan nilai input yang salah ---
+            inputTanggalLahir.value = ""; 
+            
+            // --- KODE TAMBAHAN: Fokus otomatis ke kolom setelah menekan tombol tutup modal ---
+            document.getElementById('statusModal').addEventListener('hidden.bs.modal', function () {
+                inputTanggalLahir.focus();
+            }, { once: true }); // { once: true } memastikan event listener langsung dihapus setelah dieksekusi sekali
+            
             return; // Gagalkan pengiriman data ke spreadsheet
         }
         
